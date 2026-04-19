@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Location Servers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <section class="hero-card">
+        <p class="eyebrow">Shared Rooms - Up to 5 People</p>
+        <h1>Create a private server and share your live location.</h1>
+        <p class="hero-copy">
+          Servers now keep their chat, files, invite links, routes, and owner settings even after
+          a restart. Join with a password or a valid invite link.
+        </p>
+
+        <div id="invite-banner" class="invite-banner hidden">
+          <div>
+            <p class="eyebrow">Invite Ready</p>
+            <h3 id="invite-banner-title">Quick join link loaded</h3>
+            <p id="invite-banner-copy" class="field-note">
+              Enter your name to join the invited server faster.
+            </p>
+          </div>
+        </div>
+
+        <form id="entry-form" class="entry-form" novalidate>
+          <label>
+            <span>Your name</span>
+            <input id="user-name" name="userName" type="text" maxlength="24" placeholder="Aarav" />
+          </label>
+          <label>
+            <span>Server name</span>
+            <input id="room-name" name="roomName" type="text" maxlength="32" placeholder="Weekend Trip" />
+          </label>
+          <label>
+            <span>Server password</span>
+            <input
+              id="room-password"
+              name="password"
+              type="password"
+              minlength="4"
+              maxlength="64"
+              placeholder="At least 4 characters"
+              autocomplete="current-password"
+            />
+          </label>
+          <p class="field-note">
+            Use the same password when anyone joins this server. Invite links can also be used for
+            quick join.
+          </p>
+
+          <div class="button-row">
+            <button type="button" id="create-btn" class="primary-btn">Create server</button>
+            <button type="button" id="join-btn" class="secondary-btn">Join server</button>
+          </div>
+        </form>
+
+        <div id="entry-message" class="message" role="status" aria-live="polite"></div>
+      </section>
+
+      <section id="room-panel" class="room-panel hidden">
+        <div class="room-topbar">
+          <div>
+            <p class="eyebrow">Connected Server</p>
+            <h2 id="room-title">Server</h2>
+            <p id="room-subtitle" class="room-subtitle">Private room with live location and chat.</p>
+          </div>
+          <div class="topbar-actions">
+            <span id="owner-badge" class="security-badge hidden">Owner view</span>
+            <span id="lock-badge" class="capacity-badge">Unlocked</span>
+            <span id="capacity-badge" class="capacity-badge">0 / 5 users</span>
+            <button id="leave-btn" class="ghost-btn" type="button">Leave server</button>
+          </div>
+        </div>
+
+        <div class="share-grid">
+          <section class="share-card">
+            <h3>Your live sharing</h3>
+            <p class="share-copy">
+              Start sharing to stream your current coordinates, convert them into a readable
+              address, and keep the room updated as you move.
+            </p>
+            <div class="button-row">
+              <button id="share-btn" class="primary-btn" type="button">Start live sharing</button>
+              <button id="stop-btn" class="secondary-btn" type="button" disabled>Stop sharing</button>
+            </div>
+            <div id="share-status" class="message" role="status" aria-live="polite"></div>
+          </section>
+
+          <section class="map-card">
+            <div class="map-card-header">
+              <div>
+                <p class="eyebrow">Google Map Preview</p>
+                <h3 id="map-title">Pick a member</h3>
+              </div>
+              <div class="map-actions">
+                <a id="maps-link" class="map-link disabled-link" href="#" target="_blank" rel="noreferrer">
+                  Open in Google Maps
+                </a>
+                <a id="directions-link" class="map-link disabled-link" href="#" target="_blank" rel="noreferrer">
+                  Directions
+                </a>
+              </div>
+            </div>
+            <iframe
+              id="map-canvas"
+              class="map-canvas"
+              title="Google Maps preview"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+              hidden
+            ></iframe>
+            <p id="map-empty" class="map-empty">
+              A shared location will appear here as soon as someone starts sharing.
+            </p>
+            <p id="route-summary" class="route-summary">
+              Select a member to view route history, recent stops, and directions.
+            </p>
+            <div id="route-list" class="route-list"></div>
+          </section>
+        </div>
+
+        <div class="tools-grid">
+          <section class="invite-card">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Invite System</p>
+                <h3>Share this server</h3>
+              </div>
+              <p class="members-help">Invite links and QR codes help people join faster.</p>
+            </div>
+            <label class="invite-field">
+              <span>Invite link</span>
+              <input id="invite-link" type="text" readonly />
+            </label>
+            <div class="button-row">
+              <button id="copy-invite-btn" class="secondary-btn" type="button">Copy link</button>
+              <a id="open-invite-btn" class="secondary-btn" href="#" target="_blank" rel="noreferrer">Open invite</a>
+            </div>
+            <div class="qr-wrap">
+              <img id="invite-qr" class="invite-qr" alt="Server invite QR code" />
+              <p id="invite-note" class="members-help">Scan this QR code to open the invite link.</p>
+            </div>
+            <div id="invite-status" class="message" role="status" aria-live="polite"></div>
+          </section>
+
+          <section id="admin-panel" class="admin-card hidden">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Owner Controls</p>
+                <h3>Secure your server</h3>
+              </div>
+              <p class="members-help">Only the owner can change these settings.</p>
+            </div>
+            <p id="admin-lock-copy" class="members-help">
+              Lock the room, change the password, or remove members when needed.
+            </p>
+            <div class="button-row">
+              <button id="lock-btn" class="secondary-btn" type="button">Lock server</button>
+            </div>
+            <label class="admin-password-field">
+              <span>New password</span>
+              <input
+                id="admin-password-input"
+                type="password"
+                minlength="4"
+                maxlength="64"
+                placeholder="Change the server password"
+              />
+            </label>
+            <button id="change-password-btn" class="primary-btn" type="button">Update password</button>
+            <div id="admin-status" class="message" role="status" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <section class="chat-section">
+          <div class="chat-header">
+            <div>
+              <p class="eyebrow">Room Chat</p>
+              <h3>Talk with everyone here</h3>
+            </div>
+            <div class="chat-header-meta">
+              <span id="chat-unread-badge" class="hidden-badge">0 unread</span>
+              <p class="members-help">Messages stay inside this server.</p>
+            </div>
+          </div>
+          <p id="typing-indicator" class="typing-indicator">No one is typing right now.</p>
+
+          <div id="chat-messages" class="chat-messages"></div>
+
+          <form id="chat-form" class="chat-form">
+            <label class="chat-compose" for="chat-input">
+              <span>Message</span>
+              <textarea
+                id="chat-input"
+                maxlength="280"
+                rows="3"
+                placeholder="Send a message to everyone in this server"
+              ></textarea>
+            </label>
+            <input id="chat-file-input" type="file" class="hidden-file-input" />
+            <div class="chat-form-footer">
+              <p class="chat-hint">Up to 280 characters per message. Files can be up to 100 GB.</p>
+              <div class="chat-actions">
+                <button id="chat-file-btn" class="secondary-btn" type="button">Add file</button>
+                <button id="chat-send-btn" class="primary-btn" type="submit">Send</button>
+              </div>
+            </div>
+            <div id="chat-upload-panel" class="chat-upload-panel hidden" aria-live="polite">
+              <div class="chat-upload-header">
+                <p id="chat-upload-name" class="chat-upload-name">Uploading file</p>
+                <p id="chat-upload-percent" class="chat-upload-percent">0%</p>
+              </div>
+              <div class="chat-upload-track">
+                <div id="chat-upload-bar" class="chat-upload-bar"></div>
+              </div>
+              <p id="chat-upload-detail" class="chat-upload-detail">0 B of 0 B uploaded</p>
+            </div>
+            <div id="chat-status" class="message" role="status" aria-live="polite"></div>
+          </form>
+        </section>
+
+        <section class="members-section">
+          <div class="members-header">
+            <div>
+              <p class="eyebrow">Room Members</p>
+              <h3>Presence and route history</h3>
+            </div>
+            <p class="members-help">Each server is limited to 5 online users at a time.</p>
+          </div>
+          <div id="members-list" class="members-list"></div>
+        </section>
+      </section>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>
