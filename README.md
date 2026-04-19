@@ -279,3 +279,7 @@ Example response:
 - Address lookup depends on internet access and the reverse-geocoding service being reachable.
 - The shared map uses Google Maps in the browser.
 - Large uploads still depend on the machine having enough free disk space.
+
+## Go Online
+
+- https://adhrit-liveroom-maps.onrender.com
